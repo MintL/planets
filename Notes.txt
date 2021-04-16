@@ -1,0 +1,20 @@
+Factorio meets No man's sky meets anno
+
+ * Planeter med olika resurser
+   - Åker med rymdskepp mellan planeter
+   - Representeras med en UI-karta
+   - Måste laga rymdskepp genom att crafta delar
+   - Frakta resurser mellan planeter
+     * Cargo ships (upgradeable)
+   - Tänk anno serien med båtar mellan öar
+
+ * Hembas med säng
+   - Kan sova för att natten ska gå snabbare
+ 
+ * Resurser nergrävda i marken
+   - Ta analysprov manuellt för att få procentsats
+   - Senare en byggnad som scannar större area
+ * Mining med byggnad som är olika effektiv beroende på procent av vald resurs
+
+ * Experter inom olika områden ger bonusar och krävs för att utföra vissa handlingar
+
