@@ -20,21 +20,24 @@ namespace Planets
             _canvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
             _scaler = _canvas.GetComponent<CanvasScaler>();
 
+            _inventory = FindObjectOfType<InventorySystem>();
+            _inventory.InventoryUpdated += OnInventoryUpdated;
+
             _slots = new List<SlotController>();
-            foreach (Transform child in transform.Find("Slots").transform)
+            var parent = transform.Find("Slots").transform;
+            for (var i = 0; i < parent.childCount; i++)
             {
+                Transform child = parent.GetChild(i);
                 var slotController = child.GetComponent<SlotController>();
                 _slots.Add(slotController);
                 slotController.Clicked += OnSlotClicked;
+                slotController.OnSlotChanged(_inventory.Slots[i]);
             }
-
-            _inventory = FindObjectOfType<InventorySystem>();
-            _inventory.InventoryUpdated += OnInventoryUpdated;
         }
 
         public void OnShow()
         {
-            UpdateSlots(_inventory.Slots);
+            _inventory.UpdateSlots();
         }
 
         public void OnElementChanged(object element)
@@ -44,14 +47,14 @@ namespace Planets
 
         public void Update()
         {
-            if (_inventory.HoverSlot != null)
+            if (_inventory.HandSlot != null)
             {
                 var mousePos = Mouse.current.position.ReadValue();
                 var referenceRel = new Vector2(_scaler.referenceResolution.x / Screen.width,
                     _scaler.referenceResolution.y / Screen.height);
                 var pos = new Vector2(mousePos.x, mousePos.y) * referenceRel -
                           _scaler.referenceResolution * 0.5f;
-                _inventory.hoverSlotController.transform.localPosition = pos + new Vector2(5, -5);
+                _inventory.handSlotController.transform.localPosition = pos + new Vector2(5, -5);
             }
         }
 
@@ -61,10 +64,11 @@ namespace Planets
             {
                 if (eventData.button == PointerEventData.InputButton.Left)
                 {
-                    if (_inventory.HoverSlot != null)
-                    {
-                        slot.TransferTo(_inventory.HoverSlot);
-                    }
+                    slot.Count += 10;
+                    // if (_inventory.HoverSlot != null)
+                    // {
+                    //     slot.TransferTo(_inventory.HoverSlot);
+                    // }
                 }
                 else if (eventData.button == PointerEventData.InputButton.Right)
                 {
@@ -75,20 +79,14 @@ namespace Planets
 
         private void OnInventoryUpdated(object sender, List<Slot> slots)
         {
-            UpdateSlots(slots);
+            //UpdateSlots(slots);
         }
 
         private void UpdateSlots(List<Slot> slots)
         {
-            for (var i = 0; i < slots.Count; i++)
+            foreach (var slot in slots)
             {
-                var slot = slots[i];
-                var controller = _slots[i];
 
-                if (slot != null)
-                {
-                    controller.Slot.Set(slot.Item, slot.Count);
-                }
             }
         }
     }

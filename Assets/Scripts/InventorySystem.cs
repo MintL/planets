@@ -5,81 +5,100 @@ using Planets;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Planets
 {
     public class InventorySystem : MonoBehaviour
     {
-        public SlotController hoverSlotController;
+        [FormerlySerializedAs("hoverSlotController")] public SlotController handSlotController;
         public EventHandler<List<Slot>> InventoryUpdated { get; set; }
         public List<Slot> Slots { get; set; }
 
         private ItemDatabase _itemDatabase;
 
-        public Slot HoverSlot
+        public Slot HandSlot
         {
             get;
             set;
         }
 
         private IDictionary<Item, int> _inventory = new Dictionary<Item, int>();
-        private int _pickedUpSlotIndex = 0;
+        private int _handSlotIndex = -1;
+
+        private void Awake()
+        {
+            Slots ??= new List<Slot>();
+            for (int i = 0; i < 39; i++)
+            {
+                Slots.Add(new Slot());
+            }
+        }
 
         public void Start()
         {
             _itemDatabase = GetComponent<ItemDatabase>();
 
+            _inventory.Add(_itemDatabase.GetItem(0), 50);
+            _inventory.Add(_itemDatabase.GetItem(1), 5);
 
-            //
-            // _slots[0].Item = _itemDatabase.GetItem(0);
-            // _slots[0].Count = 50;
-            //
-            // _slots[2].Item = _itemDatabase.GetItem(0);
-            // _slots[2].Count = 5;
-
-            PickUp(new Slot { Item = _itemDatabase.GetItem(0), Count = 10 });
-
-            HoverSlot = hoverSlotController.Slot;
-            HoverSlot.Item = null;
-            HoverSlot.Count = 0;
+            HandSlot = new Slot();
+            handSlotController.OnSlotChanged(HandSlot);
         }
 
         public void UpdateSlots()
         {
-            Slots = new List<Slot>();
-
+            var i = 0;
             foreach (var item in _inventory)
             {
-                Slots.Add(new Slot { Item = item.Key, Count = item.Value });
+                if (_handSlotIndex == i)
+                {
+                    HandSlot.Set(item.Key, item.Value);
+                    Slots[i].Set(null, 0);
+                }
+                else
+                {
+                    Slots[i].Set(item.Key, item.Value);
+                }
+                i++;
             }
         }
 
-        public void PickUp(Slot slot)
+        public void PickUp(Item item, int count)
         {
-            if (_inventory.ContainsKey(slot.Item))
+            if (_inventory.ContainsKey(item))
             {
-                _inventory[slot.Item] += slot.Count;
+                _inventory[item] += count;
             }
             else
             {
-                _inventory.Add(slot.Item, slot.Count);
+                _inventory.Add(item, count);
             }
 
             UpdateSlots();
-            InventoryUpdated?.Invoke(this, Slots);
         }
 
-        public void Drop(Slot slot)
+        public void Drop(Item item, int count)
         {
-            _inventory[slot.Item] -= slot.Count;
-            InventoryUpdated?.Invoke(this, Slots);
+            if (_inventory.ContainsKey(item))
+            {
+                var minCount = Math.Min(_inventory[item], count);
+                if (minCount == count)
+                {
+                    _inventory.Remove(item);
+                }
+                else
+                {
+                    _inventory[item] -= minCount;
+                }
+            }
         }
 
-        public void TakeToHoverSlot(Slot slot)
+        public void UpdateHandSlot(Slot slot)
         {
-            HoverSlot.Set(slot.Item, slot.Count);
-            //_pickedUpSlotIndex
+            _handSlotIndex = slot.Item == null ? -1 : Slots.IndexOf(slot);
+            UpdateSlots();
         }
     }
 }

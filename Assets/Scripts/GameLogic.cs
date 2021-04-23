@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace Planets
 {
@@ -8,6 +9,7 @@ namespace Planets
     {
         public InputAction quitAction;
         public InputAction inventoryAction;
+        public InputAction galaxyAction;
 
         private void Awake()
         {
@@ -17,9 +19,11 @@ namespace Planets
                 var inventory = FindObjectOfType<InventorySystem>();
                 FindObjectOfType<UIController>().Toggle(Panels.Inventory, inventory);
             };
+            galaxyAction.performed += context => SceneManager.LoadScene("Galaxy", LoadSceneMode.Additive);
 
             quitAction.Enable();
             inventoryAction.Enable();
+            galaxyAction.Enable();
         }
 
         // Start is called before the first frame update

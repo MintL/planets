@@ -29,13 +29,16 @@ namespace Planets
             Slot = new Slot
             {
                 Item = _itemDatabase.GetItem("Iron Ore"),
-                Count = 0,//(int)(UnityEngine.Random.value * 100f),
+                Count = 10,//(int)(UnityEngine.Random.value * 100f),
             };
+
+            var provider = GetComponent<Provider>();
+            provider.OutputSlot = Slot;
         }
 
         public void PickUp(Slot slot)
         {
-            _inventory.PickUp(slot);
+            //_inventory.PickUp(slot);
             Slot.Count = 0;
             SlotUpdated?.Invoke(this, Slot);
         }
