@@ -45,17 +45,8 @@ namespace Planets
 
         private void OnCountChanged(object sender, int count)
         {
-            if (count > 1)
-            {
-                _textCount.enabled = true;
-                _textCount.text = count.ToString();
-            }
-            else
-            {
-                _textCount.text = "";
-                _textCount.enabled = false;
-            }
-            _image.enabled = count > 0;
+            _textCount.text = count.ToString();
+            _image.color =  count > 0 ? Color.white : new Color(1f, 1f, 1f, 0.5f);
         }
 
         private void OnItemChanged(object sender, Item item)
@@ -63,10 +54,12 @@ namespace Planets
             if (item != null)
             {
                 _image.sprite = item.Sprite;
+                _textCount.enabled = true;
             }
             else
             {
                 _image.enabled = false;
+                _textCount.enabled = false;
             }
         }
 

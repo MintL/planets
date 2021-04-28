@@ -29,7 +29,7 @@ namespace Planets
             Slot = new Slot
             {
                 Item = _itemDatabase.GetItem("Iron Ore"),
-                Count = 10,//(int)(UnityEngine.Random.value * 100f),
+                Count = 0,//(int)(UnityEngine.Random.value * 100f),
             };
 
             var provider = GetComponent<Provider>();
@@ -40,7 +40,6 @@ namespace Planets
         {
             //_inventory.PickUp(slot);
             Slot.Count = 0;
-            SlotUpdated?.Invoke(this, Slot);
         }
 
         public void Update()
@@ -61,8 +60,6 @@ namespace Planets
         private void OnTime()
         {
             Slot.Add(1);
-
-            SlotUpdated?.Invoke(this, Slot);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -81,19 +78,6 @@ namespace Planets
             {
                 FindObjectOfType<UIController>().Show(Panels.MiningDrill, this);
             }
-
-            // var canvasGroup = _drillUI.GetComponent<CanvasGroup>();
-            // canvasGroup.alpha = 1;
-            // canvasGroup.interactable = true;
-            // canvasGroup.blocksRaycasts = true;
-            //
-            // var drills = FindObjectsOfType(typeof(MiningDrill));
-            // foreach (var drill in drills.OfType<MiningDrill>())
-            // {
-            //     drill.IsVisible = false;
-            // }
-            // _isVisible = true;
-            // _outputSlot.Set(_slot.Item, _slot.Count);
         }
     }
 }

@@ -40,5 +40,12 @@ namespace Planets
             Item = item;
             Count = count;
         }
+
+        public int Take(int? count = null)
+        {
+            var max = count == null ? Count : Math.Min(count.Value, Count);
+            Count -= max;
+            return max;
+        }
     }
 }

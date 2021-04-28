@@ -1,27 +1,25 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Planets
 {
-    public class Furnace : MonoBehaviour
+    public class Furnace : Factory
     {
-        private Slot _inputSlot;
-        private Slot _outputSlot;
-
-
-        // Start is called before the first frame update
-        void Start()
+        protected override Recipe GetRecipe()
         {
-            _inputSlot = new Slot();
-            _outputSlot = new Slot();
-            Debug.Log("Furnace ready");
-        }
-
-        public void OnCargo(Slot inboundSlot)
-        {
-            _inputSlot.Item = inboundSlot.Item;
-            _inputSlot.Count += inboundSlot.Count;
+            return new Recipe(new Slot
+            {
+                Item = FindObjectOfType<ItemDatabase>().GetItem("Iron Ore"),
+                Count = 2,
+            }, new Slot
+            {
+                Item = FindObjectOfType<ItemDatabase>().GetItem("Iron Ingot"),
+                Count = 1,
+            },
+            4f);
         }
     }
 }

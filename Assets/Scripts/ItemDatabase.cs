@@ -25,6 +25,7 @@ namespace Planets
             {
                 { 0, new Item(0, "Wood", "wood") },
                 { 1, new Item(1, "Iron Ore", "iron-ore") },
+                { 2, new Item(2, "Iron Ingot", "iron-ingot") },
             };
         }
     }

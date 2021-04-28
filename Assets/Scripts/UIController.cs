@@ -6,12 +6,14 @@ namespace Planets
     {
         MiningDrill,
         Inventory,
+        Recipe,
     }
 
     public class UIController : MonoBehaviour
     {
         public MiningDrillController MiningDrill;
         public InventoryController Inventory;
+        public RecipeController RecipeController;
 
         private IPanel _current;
 
@@ -23,6 +25,7 @@ namespace Planets
             {
                 Panels.MiningDrill => MiningDrill as IPanel,
                 Panels.Inventory => Inventory as IPanel,
+                Panels.Recipe => RecipeController as IPanel,
             };
 
             if (_current is MonoBehaviour show)
@@ -57,9 +60,10 @@ namespace Planets
             {
                 Panels.MiningDrill => MiningDrill as IPanel,
                 Panels.Inventory => Inventory as IPanel,
+                Panels.Recipe => RecipeController as IPanel,
             };
 
-            if (togglePanel == _current)
+            if (_current != null)
             {
                 Hide();
             }

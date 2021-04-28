@@ -17,26 +17,25 @@ namespace Planets
         private Provider _provider;
         private Requester _requester;
 
-        public Slot Slot { get; set; }
+        public Slot Slot { get; set; } = new Slot();
 
-        private void Start()
-        {
-            Slot = new Slot();
-        }
-
-        public void SetupCargo(Provider provider, Requester requester)
+        public void SetupCargo(Provider provider, Requester requester, Slot slot)
         {
             _provider = provider;
             _requester = requester;
-            _targetPos = provider.transform.position;
+            _targetPos = requester.transform.position;
             _direction = (_targetPos - transform.position).normalized;
+
+            Slot.Item = slot.Item;
+            Slot.Count = slot.Take(MaxCapacity);
+            Debug.Log(Slot.Count);
 
             _isActive = true;
         }
 
         public void Return()
         {
-            _targetPos = _requester.transform.position;
+            _targetPos = _provider.transform.position;
             _direction = (_targetPos - transform.position).normalized;
 
             _isActive = true;
@@ -52,17 +51,18 @@ namespace Planets
                 var deltaPos = _direction * Time.deltaTime * Speed;
                 transform.position += deltaPos;
 
-                if (dist < 0.01)
+                if (dist < 0.5)
                 {
                     _isActive = false;
 
-                    if (Slot.Count == 0)
+                    if (Slot.Count > 0)
                     {
-                        _provider.PickUp(this, MaxCapacity);
+                        _requester.Drop(this);
+                        Return();
                     }
                     else
                     {
-                        _requester.Ready();
+                        _provider.Ready(this);
                         Destroy(gameObject);
                     }
                 }
